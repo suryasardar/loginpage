@@ -33,18 +33,68 @@ module.exports = {
     });
   },
   getUserByUserId: (req, res) => {
-    con;
+    const ID = req.params.ID;
     getUserById(ID, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).json({
+        return;
+      }
+      if (!results) {
+        return res.json({
           success: 0,
-          message: "database connection error",
+          message: "record not found",
         });
       }
       return res.status(200).json({
         success: 1,
         data: results,
+      });
+    });
+  },
+  getusers: (req, res) => {
+    // const ID = req.params.ID;
+    getUsers((err, results) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      return res.status(200).json({
+        success: 1,
+        data: results,
+      });
+    });
+  },
+  updateusers: (req, res) => {
+    const body = req.body;
+    const salt = genSaltSync(10);
+    body.password = hashSync(body.password, salt);
+    updateUsers(body, (err, results) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      return res.status(200).json({
+        success: 1,
+        message: "updated succesfully",
+      });
+    });
+  },
+  deleteusers: (req, res) => {
+    const body = req.body;
+    deleteUsers(body, (err, results) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      if (!results) {
+        return res.json({
+          success: 0,
+          message: "record not found",
+        });
+      }
+      return res.status(200).json({
+        success: 1,
+        message: "user deleted succesfully",
       });
     });
   },
